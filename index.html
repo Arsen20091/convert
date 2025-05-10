@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,13 +9,22 @@
 <body>
   <div class="converter">
     <h1>Конвертер валют</h1>
-    <div class="inputs">
-      <input type="number" id="amount" placeholder="Введите сумму" />
-      <select id="from-currency"></select>
-      <select id="to-currency"></select>
+    
+    <div class="input-group">
+      <div class="input-box">
+        <input type="number" id="amount" placeholder="100" value="100" min="0">
+        <select id="from-currency"></select>
+      </div>
+      
+      <div class="swap-icon">⇅</div>
+      
+      <div class="input-box">
+        <input type="text" id="result" placeholder="Результат" readonly>
+        <select id="to-currency"></select>
+      </div>
     </div>
-    <button id="convert-btn">Конвертировать</button>
-    <p id="result"></p>
+    
+    <div class="rate-info" id="rate-info"></div>
   </div>
 
   <script src="renderer.js"></script>

@@ -1,36 +1,67 @@
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', function() {
+  //Получаем элементы
   const amountInput = document.getElementById('amount');
+  const resultInput = document.getElementById('result');
   const fromCurrency = document.getElementById('from-currency');
   const toCurrency = document.getElementById('to-currency');
-  const convertBtn = document.getElementById('convert-btn');
-  const result = document.getElementById('result');
+  const swapIcon = document.querySelector('.swap-icon');
+  const rateInfo = document.getElementById('rate-info');
 
-  const currencies = await window.api.getCurrencies();
+  //Загружаем валюты
+  function loadCurrencies() {
+    window.api.getCurrencies().then(function(currencies) {
+      currencies.forEach(function(currency) {
+        fromCurrency.innerHTML += '<option value="' + currency + '">' + currency + '</option>';
+        toCurrency.innerHTML += '<option value="' + currency + '">' + currency + '</option>';
+      });
+      
+      // USD -> RUB по умолчанию
+      fromCurrency.value = 'USD';
+      toCurrency.value = 'RUB';
+      
+      
+      convertCurrency();
+    });
+  }
 
-  currencies.forEach((curr) => {
-    fromCurrency.innerHTML += `<option value="${curr}">${curr}</option>`;
-    toCurrency.innerHTML += `<option value="${curr}">${curr}</option>`;
-  });
-
-  convertBtn.addEventListener('click', async () => {
+  //Конвертация валют
+  function convertCurrency() {
     const amount = parseFloat(amountInput.value);
     const from = fromCurrency.value;
     const to = toCurrency.value;
 
-    if (!amount || amount <= 0) {
-      result.textContent = 'Введите корректную сумму.';
-      result.style.opacity = '1';
+    if (isNaN(amount) || amount < 0) {
+      resultInput.value = '';
+      rateInfo.textContent = 'Введите сумму больше нуля';
       return;
     }
 
-    const rate = await window.api.getExchangeRate(from, to);
+    window.api.getExchangeRate(from, to).then(function(rate) {
+      if (rate) {
+        const result = (amount * rate).toFixed(2);
+        resultInput.value = result;
+        rateInfo.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+      } else {
+        resultInput.value = '';
+        rateInfo.textContent = 'Курс не доступен';
+      }
+    });
+  }
 
-    if (rate) {
-      result.textContent = `${amount} ${from} = ${(amount * rate).toFixed(2)} ${to}`;
-    } else {
-      result.textContent = 'Курс обмена недоступен.';
-    }
+  //Обмен валют местами
+  function swapCurrencies() {
+    const temp = fromCurrency.value;
+    fromCurrency.value = toCurrency.value;
+    toCurrency.value = temp;
+    convertCurrency();
+  }
 
-    result.style.opacity = '1';
-  });
+  //Обработчики событий
+  amountInput.addEventListener('input', convertCurrency);
+  fromCurrency.addEventListener('change', convertCurrency);
+  toCurrency.addEventListener('change', convertCurrency);
+  swapIcon.addEventListener('click', swapCurrencies);
+
+  //Загрузка валют
+  loadCurrencies();
 });
