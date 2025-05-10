@@ -79,4 +79,6 @@ h1 {
 
 #result {
   background-color: #f8f9fa;
+  width: 200px; /* Увеличена ширина */
+  overflow: visible; /* Убедимся, что текст не обрезается */
 }
