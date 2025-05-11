@@ -6,8 +6,8 @@ const os = require('os');
 
 const configPath = path.join(app.getPath('userData'), 'config.json');
 let config = {
-  apiBaseUrl: 'http://localhost:3000', // Базовый URL API
-  windowState: { width: 800, height: 600 } // Сохраняем размеры окна
+  apiBaseUrl: 'http://localhost:3000',
+  windowState: { width: 800, height: 600 }
 };
 try {
   if (fs.existsSync(configPath)) {
@@ -26,7 +26,7 @@ function createWindow() {
     width: config.windowState.width,
     height: config.windowState.height,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'), // прелоад скрипт
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false, 
       contextIsolation: true 
     },
@@ -45,24 +45,21 @@ function createWindow() {
   });
 }
 
-// обработчики событий приложения
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-  // на macOS приложение остается активным пока не закрыто
+
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('activate', () => {
-  // на macOS воссоздаем окно если иконка в доке нажата
   if (mainWindow === null) {
     createWindow();
   }
 });
 
-// вспомогательная функция для API запросов
 async function makeApiRequest(endpoint, params = {}) {
   try {
     const response = await axios.get(`${config.apiBaseUrl}${endpoint}`, { 
@@ -84,11 +81,8 @@ async function makeApiRequest(endpoint, params = {}) {
   }
 }
 
-
-// получение курса валюты
 ipcMain.handle('get-exchange-rate', async (_, from, to) => {
   try {
-    // обработка одинаковых валют
     if (from === to) return 1;
 
     const response = await axios.get(`http://localhost:3000/api/convert`, {
