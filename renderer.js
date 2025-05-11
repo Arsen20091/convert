@@ -1,21 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Получаем элементы
   const amountInput = document.getElementById('amount');
   const resultInput = document.getElementById('result');
   const fromCurrency = document.getElementById('from-currency');
   const toCurrency = document.getElementById('to-currency');
   const swapIcon = document.querySelector('.swap-icon');
   const rateInfo = document.getElementById('rate-info');
-
-  // Загружаем валюты
   function loadCurrencies() {
     window.api.getCurrencies().then(function(currencies) {
       currencies.forEach(function(currency) {
         fromCurrency.innerHTML += '<option value="' + currency + '">' + currency + '</option>';
         toCurrency.innerHTML += '<option value="' + currency + '">' + currency + '</option>';
       });
-      
-      // USD -> RUB по умолчанию
       fromCurrency.value = 'USD';
       toCurrency.value = 'RUB';
       
@@ -23,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Конвертация валют
 function convertCurrency() {
   const amount = parseFloat(amountInput.value);
   const from = fromCurrency.value;
@@ -48,7 +42,6 @@ function convertCurrency() {
   });
 }
 
-  // Обмен валют местами
   function swapCurrencies() {
     const temp = fromCurrency.value;
     fromCurrency.value = toCurrency.value;
@@ -56,12 +49,10 @@ function convertCurrency() {
     convertCurrency();
   }
 
-  // Обработчики событий
   amountInput.addEventListener('input', convertCurrency);
   fromCurrency.addEventListener('change', convertCurrency);
   toCurrency.addEventListener('change', convertCurrency);
   swapIcon.addEventListener('click', swapCurrencies);
 
-  // Загрузка валют
   loadCurrencies();
 });
